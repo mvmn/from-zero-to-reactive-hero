@@ -9,6 +9,7 @@ import reactor.util.function.Tuple3;
 import reactor.util.function.Tuples;
 
 import java.util.List;
+import java.util.function.Function;
 
 import static com.example.annotations.Complexity.Level.EASY;
 import static com.example.annotations.Complexity.Level.HARD;
@@ -21,21 +22,21 @@ public class Part2CreationTransformationTermination {
         // TODO: collect to list
         // Flux#collectList or Flux#collect(+Collectors.toList)
 
-        throw new RuntimeException("Not implemented");
+        return source.collectList();
     }
 
     @Complexity(EASY)
     public static String lastElementFromSource(Flux<String> source) {
         // TODO: block until all emitted
 
-        throw new RuntimeException("Not implemented");
+        return source.last().block();
     }
 
     @Complexity(EASY)
     public static Publisher<String> mergeSeveralSources(Publisher<String>... sources) {
         // TODO: merge all sources in one stream
 
-        throw new RuntimeException("Not implemented");
+        return Flux.merge(sources);
     }
 
     @Complexity(EASY)
@@ -43,7 +44,7 @@ public class Part2CreationTransformationTermination {
         // TODO: return events from the first emitted
         // HINT: Flux.first()
 
-        throw new RuntimeException("Not implemented");
+        return Flux.first(sources);
     }
 
     @Complexity(EASY)
@@ -52,7 +53,7 @@ public class Part2CreationTransformationTermination {
         // HINT: flux.groupBy(java.util.function.Function<? super T,? extends K>)
         // HINT: String#chartAt(0) to extract first character
 
-        throw new RuntimeException("Not implemented");
+        return words.groupBy(s->s.charAt(0));
     }
 
     @Complexity(MEDIUM)
@@ -60,7 +61,7 @@ public class Part2CreationTransformationTermination {
         // TODO: wait completion and .THEN() execute another source
         // HINT: source.then( + Flux#just('Hello') )
 
-        throw new RuntimeException("Not implemented");
+		return source.then(Mono.just("Hello"));
     }
 
     @Complexity(MEDIUM)
@@ -71,7 +72,7 @@ public class Part2CreationTransformationTermination {
         // HINT: Flux#zip produce as the result of zipping 3 streams elements of type Tuple3
         // HINT: use Tuple3.getT1 ... getT2 ... getT3
 
-        throw new RuntimeException("Not implemented");
+        return Flux.zip(prefix, word, suffix).map(t->t.getT1()+t.getT2()+t.getT3());
     }
 
     @Complexity(HARD)
@@ -95,7 +96,8 @@ public class Part2CreationTransformationTermination {
         //                prefix, word, suffix
         //        );
 
-        throw new RuntimeException("Not implemented");
+		return Flux.combineLatest(prefix, word, suffix, Tuples::fromArray)
+				.map(t -> "" + t.getT1() + t.getT2() + t.get(2));
     }
 
     @Complexity(HARD)
@@ -110,6 +112,7 @@ public class Part2CreationTransformationTermination {
         //       or IceCreamType.CHOCOLATE
         //       In case if event is IceCreamType.VANILLA - return vanillaIceCreamStream Flux
         //       otherwise return chocolateIceCreamStream Flux
-        throw new RuntimeException("Not implemented yet");
+		return clientPreferences
+				.switchMap(t -> IceCreamType.VANILLA.equals(t) ? vanillaIceCreamStream : chocolateIceCreamStream);
     }
 }

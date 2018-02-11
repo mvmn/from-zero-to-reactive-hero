@@ -2,8 +2,11 @@ package com.example.part_8.external;
 
 import com.example.part_8.external.utils.PriceMessageUnpacker;
 import com.example.part_8.external.utils.TradeMessageUnpacker;
+import com.google.common.base.Functions;
+
 import reactor.core.publisher.Flux;
 
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -30,14 +33,14 @@ public class CryptoConnectionHolder {
         return reactiveCryptoListener;
     }
 
-    // TODO: implement resilience such as retry with delay
+    // XTODO: implement resilience such as retry with delay
     public static <T> Flux<T> provideResilience(Flux<T> input) {
-        return input;
+    	    return input.retryWhen(err -> Flux.interval(Duration.ofSeconds(10L)).onBackpressureDrop());
     }
 
 
-    // TODO: implement caching of 3 last elements & multi subscribers support
+    // XTODO: implement caching of 3 last elements & multi subscribers support
     public static <T> Flux<T> provideCaching(Flux<T> input) {
-        return input;
+        return input.cache(3);
     }
 }

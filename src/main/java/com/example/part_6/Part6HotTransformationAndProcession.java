@@ -1,12 +1,14 @@
 package com.example.part_6;
 
-import com.example.annotations.Complexity;
+import static com.example.annotations.Complexity.Level.MEDIUM;
+
 import org.reactivestreams.Publisher;
+
+import com.example.annotations.Complexity;
+
 import reactor.core.publisher.DirectProcessor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.TopicProcessor;
-
-import static com.example.annotations.Complexity.Level.MEDIUM;
 
 public class Part6HotTransformationAndProcession {
 
@@ -16,7 +18,7 @@ public class Part6HotTransformationAndProcession {
         // TODO: transform to hot by publishing elements regardless amount of subscribers
         // HINT: Flux#publish() + .autoConnect()
 
-        throw new RuntimeException("Not implemented");
+    		return coldSource.publish().autoConnect();
     }
 
     @Complexity(MEDIUM)
@@ -24,7 +26,7 @@ public class Part6HotTransformationAndProcession {
         // TODO: reply 3 last elements to subscribers
         // HINT: Flux#reply(3) + .autoConnect()
 
-        throw new RuntimeException("Not implemented");
+        return coldSource.replay(3).autoConnect();
     }
 
 
@@ -35,8 +37,12 @@ public class Part6HotTransformationAndProcession {
         //       2) subscribe cold source onto created instance of Processor
         //       3) return processor instance
 
-        throw new RuntimeException("Not implemented");
-    }
+		DirectProcessor<String> processor = DirectProcessor.create();
+
+		coldSource.subscribe(processor);
+
+		return processor;
+	}
 
     @Complexity(MEDIUM)
     public static Flux<String> processEachSubscriberOnSeparateThread(Flux<String> coldSource) {
@@ -45,6 +51,9 @@ public class Part6HotTransformationAndProcession {
         //       2) subscribe cold source onto created instance of Processor
         //       3) return processor instance
 
-        throw new RuntimeException("Not implemented");
-    }
+		TopicProcessor<String> processor = TopicProcessor.create();
+
+		coldSource.subscribe(processor);
+		return processor;
+	}
 }

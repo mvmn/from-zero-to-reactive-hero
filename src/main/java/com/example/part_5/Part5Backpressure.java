@@ -1,16 +1,18 @@
 package com.example.part_5;
 
-import com.example.annotations.Complexity;
-import com.example.common.StringEventPublisher;
-import org.reactivestreams.Publisher;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.FluxSink;
+import static com.example.annotations.Complexity.Level.EASY;
+import static com.example.annotations.Complexity.Level.MEDIUM;
 
 import java.time.Duration;
 import java.util.List;
 
-import static com.example.annotations.Complexity.Level.EASY;
-import static com.example.annotations.Complexity.Level.MEDIUM;
+import org.reactivestreams.Publisher;
+
+import com.example.annotations.Complexity;
+import com.example.common.StringEventPublisher;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.FluxSink.OverflowStrategy;
 
 public class Part5Backpressure {
 
@@ -19,7 +21,7 @@ public class Part5Backpressure {
         // TODO: apply backpressure to drop elements on downstream overwhelming
         // HINT: Flux#onBackpressureDrop
 
-        throw new RuntimeException("Not implemented");
+        return upstream.onBackpressureDrop();
     }
 
     @Complexity(MEDIUM)
@@ -27,13 +29,16 @@ public class Part5Backpressure {
         // TODO: decrease emission rate by buffering elements during the second
         // HINT: Flux#window(Duration) + .flatMap( .collectList ) or MORE simply Flux#buffer(Duration)
 
-        throw new RuntimeException("Not implemented");
+        return upstream.buffer(Duration.ofSeconds(1));
     }
 
     @Complexity(MEDIUM)
     public static Publisher<String> handleBackpressureWithBuffering(StringEventPublisher stringEventPublisher) {
         // TODO: adapt non-Reactor api and apply backpressure strategy
         // HINT: Flux.create or Flux.push
-        throw new RuntimeException("Not implemented");
+    	
+		return Flux.create(emitter -> {
+			stringEventPublisher.registerEventListener(t -> emitter.next(t));
+		}, OverflowStrategy.BUFFER);
     }
 }

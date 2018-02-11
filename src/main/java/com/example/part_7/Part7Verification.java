@@ -26,7 +26,7 @@ public class Part7Verification {
         // HINT: use .expectNextCount to verify that publisher has emitted 10 elements
         // HINT: use .expectComplete() + .verify() or .verifyComplete()
 
-        throw new RuntimeException("Not implemented");
+        StepVerifier.create(toVerify).expectSubscription().expectNextCount(10).expectComplete().verify();
     }
 
     @Complexity(HARD)
@@ -43,6 +43,9 @@ public class Part7Verification {
         // HINT: use .expectNextCount to verify that publisher has emitted 10 elements
         // HINT: use .expectComplete() + .verify() or .verifyComplete()
 
-        throw new RuntimeException("Not implemented");
+//        throw new RuntimeException("Not implemented");
+        
+        StepVerifier.withVirtualTime(toVerify).expectSubscription().thenAwait(Duration.ofDays(15)).expectNextCount(10).expectComplete().verify();
+        
     }
 }
